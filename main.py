@@ -54,7 +54,7 @@ def practise_5(data=[]):
     print(f"Количество интервалов = {m}, шаг = {h}")
     interval_dots = [min_val + ((i - 0.5) * h) for i in range(m + 1)]
 
-    x_values = no_dups_data.copy()
+    x_values = interval_dots.copy()
     x_values.insert(0, x_values[0] - 0.5)
     x_values.append(x_values[-1] + 0.5)
 
@@ -64,10 +64,10 @@ def practise_5(data=[]):
         for x in data:
             if x_values[i] < x <= x_values[i + 1]:
                 y += 1
+        y /= n
         if i > 0:
-            y += y_values[i - 1]
+            y += y_values[-1]
         y_values.append(y)
-    y_values = [y / n for y in y_values]
 
     plt.figure()
     for i in range(len(y_values)):
@@ -82,8 +82,7 @@ def practise_5(data=[]):
         for x in data:
             if x_values[i] < x <= x_values[i + 1]:
                 y += 1
-        y_values.append(y)
-    y_values = [y / n for y in y_values]
+        y_values.append(y / n)
 
     plt.figure()
     plt.plot(x_values, y_values, color="blue", marker="o")
