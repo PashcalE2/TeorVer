@@ -41,20 +41,24 @@ def practise_5(data=[]):
 
     print(f"M(X) = {Data_M}\nD(X) = {Data_D}\nИсправленная D(X) = {Data_D_Corrected}\nСКО = {Data_Sko}\nИсправленное СКО = {Data_Sko_Corrected}")
 
-    F_str = "{:5.2f},         x <= {:5.2f}\n".format(0, no_dups_data[0])
-    for i in range(len(no_dups_data) - 1):
-        F_str += "{:5.2f}, {:5.2f} < x <= {:5.2f}\n".format(F[i + 1], no_dups_data[i], no_dups_data[i + 1])
-    F_str += "{:5.2f},         x >  {:5.2f}\n".format(1, no_dups_data[-1])
-
-    print(f"F(x) = \n{F_str}")
-
-    # plot F
+    # F
     m = math.ceil(1 + math.log(n, 2))
     h = (max_val - min_val) / (m - 1)
     print(f"Количество интервалов = {m}, шаг = {h}")
-    interval_dots = [min_val + ((i - 0.5) * h) for i in range(m + 1)]
+    interval_points = [min_val + ((i - 0.5) * h) for i in range(m + 1)]
 
-    x_values = interval_dots.copy()
+    F_str = "{:5.2f},         x < {:5.2f}\n".format(0, interval_points[0])
+    for i in range(len(interval_points) - 1):
+        p = 0
+        for j in data:
+            if interval_points[i] <= j < interval_points[i + 1]:
+                p += 1
+        F_str += "{:5.2f}, {:5.2f} <= x < {:5.2f}\n".format(p / n, interval_points[i], interval_points[i + 1])
+    F_str += "{:5.2f},         x >=  {:5.2f}\n".format(1, interval_points[-1])
+
+    print(f"F(x) = \n{F_str}")
+
+    x_values = interval_points.copy()
     x_values.insert(0, x_values[0] - 0.5)
     x_values.append(x_values[-1] + 0.5)
 
@@ -75,7 +79,7 @@ def practise_5(data=[]):
 
     # Poly
 
-    x_values = interval_dots.copy()
+    x_values = interval_points.copy()
     y_values = []
     for i in range(m + 1):
         y = 0
@@ -89,7 +93,7 @@ def practise_5(data=[]):
 
     # Hist
 
-    x_values = interval_dots.copy()
+    x_values = interval_points.copy()
     y_values = []
     for i in range(m):
         y = 0
