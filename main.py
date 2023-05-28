@@ -27,9 +27,6 @@ def practise_5(data=[]):
                 count[i] += 1
 
     possibilities = [i / sum(count) for i in count]
-    F = [0]
-    for i in range(len(possibilities)):
-        F.append(possibilities[i] + F[i])
 
     print(f"Вариационный ряд: {no_dups_data}")
 
@@ -44,17 +41,26 @@ def practise_5(data=[]):
     # F
     m = math.ceil(1 + math.log(n, 2))
     h = (max_val - min_val) / (m - 1)
-    print(f"Количество интервалов = {m}, шаг = {h}")
+    print(f"Количество интервалов m = {m}, шаг = {h}")
     interval_points = [min_val + ((i - 0.5) * h) for i in range(m + 1)]
 
-    F_str = "{:5.2f},         x < {:5.2f}\n".format(0, interval_points[0])
-    for i in range(len(interval_points) - 1):
+    F_str = "{:5.2f},          x < {:5.2f}\n".format(0, interval_points[0])
+    F = [0]
+    i = 0
+    while True:
         p = 0
         for j in data:
             if interval_points[i] <= j < interval_points[i + 1]:
                 p += 1
-        F_str += "{:5.2f}, {:5.2f} <= x < {:5.2f}\n".format(p / n, interval_points[i], interval_points[i + 1])
-    F_str += "{:5.2f},         x >=  {:5.2f}\n".format(1, interval_points[-1])
+        p = p / n
+        if abs(F[-1] + p - 1) > 0.0000001:
+            F.append(F[-1] + p)
+            F_str += "{:5.2f}, {:5.2f} <= x < {:5.2f}\n".format(F[-1], interval_points[i], interval_points[i + 1])
+            i += 1
+        else:
+            break
+    F.append(1)
+    F_str += "{:5.2f},          x >={:5.2f}\n".format(1, interval_points[i])
 
     print(f"F(x) = \n{F_str}")
 
@@ -62,17 +68,7 @@ def practise_5(data=[]):
     x_values.insert(0, x_values[0] - 0.5)
     x_values.append(x_values[-1] + 0.5)
 
-    y_values = []
-    for i in range(len(x_values) - 1):
-        y = 0
-        for x in data:
-            if x_values[i] < x <= x_values[i + 1]:
-                y += 1
-        y /= n
-        if i > 0:
-            y += y_values[-1]
-        y_values.append(y)
-
+    y_values = F.copy()
     plt.figure()
     for i in range(len(y_values)):
         plt.plot([x_values[i], x_values[i + 1]], [y_values[i], y_values[i]], color="blue")
@@ -81,7 +77,7 @@ def practise_5(data=[]):
 
     x_values = interval_points.copy()
     y_values = []
-    for i in range(m + 1):
+    for i in range(m):
         y = 0
         for x in data:
             if x_values[i] < x <= x_values[i + 1]:
@@ -89,7 +85,8 @@ def practise_5(data=[]):
         y_values.append(y / n)
 
     plt.figure()
-    plt.plot(x_values, y_values, color="blue", marker="o")
+    plt.ylim(0, max(y_values) + 0.1)
+    plt.plot([(x_values[i] + x_values[i + 1]) / 2 for i in range(len(y_values))], y_values, color="blue", marker="o")
 
     # Hist
 
